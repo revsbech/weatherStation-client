@@ -16,11 +16,22 @@ module.exports = function (grunt) {
       }
     },
     concat: {
-      libs: {
+      csslibs: {
+        src: [
+          "app/bower_components/html5-boilerplate/dist/css/normalize.css",
+          "app/bower_components/html5-boilerplate/dist/css/main.css",
+          "app/bower_components/bootstrap/dist/css/bootstrap.css",
+          'app/bower_components/bootstrap-material-design/dist/css/bootstrap-material-design.css',
+          'app/bower_components/bootstrap-material-design/dist/css/ripples.css',
+          "app/bower_components/moment/src/moment.js"
+        ],
+        dest: 'app/libs.css'
+      },
+      jslibs: {
         src: [
           'app/bower_components/angular/angular.js',
           'app/bower_components/angular-route/angular-route.js',
-          'app/'
+          "app/bower_components/angular-ui-router/release/angular-ui-router.js",
         ],
         dest: 'app/libs.js'
       },
@@ -33,6 +44,10 @@ module.exports = function (grunt) {
     },
     // To watch changes run 'grunt watch'
     watch: {
+      css: {
+        files: 'src/compass/**',
+        tasks: ['sass'],
+      },
       js: {
         files: 'src/js/**',
         tasks: ['concat'],
