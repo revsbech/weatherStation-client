@@ -10,3 +10,61 @@ angular.module('myApp', [
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/view1'});
 }]);
+
+'use strict';
+
+angular.module('myApp.version.interpolate-filter', [])
+
+.filter('interpolate', ['version', function(version) {
+  return function(text) {
+    return String(text).replace(/\%VERSION\%/mg, version);
+  };
+}]);
+
+'use strict';
+
+angular.module('myApp.version.version-directive', [])
+
+.directive('appVersion', ['version', function(version) {
+  return function(scope, elm, attrs) {
+    elm.text(version);
+  };
+}]);
+
+'use strict';
+
+angular.module('myApp.version', [
+  'myApp.version.interpolate-filter',
+  'myApp.version.version-directive'
+])
+
+.value('version', '0.1');
+
+'use strict';
+
+angular.module('myApp.view1', ['ngRoute'])
+
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/view1', {
+    templateUrl: 'views/view1.html',
+    controller: 'View1Ctrl'
+  });
+}])
+
+.controller('View1Ctrl', [function() {
+
+}]);
+'use strict';
+
+angular.module('myApp.view2', ['ngRoute'])
+
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/view2', {
+    templateUrl: 'views/view2.html',
+    controller: 'View2Ctrl'
+  });
+}])
+
+.controller('View2Ctrl', [function() {
+
+}]);
