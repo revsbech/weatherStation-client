@@ -3,13 +3,9 @@
 // Declare app level module which depends on views, and components
 var WeatherApp = angular.module('WeatherApp', [
   'ui.router',
+  'ui.bootstrap',
   'WeatherApp.version'
 ]);
-/*
- config(['$routeProvider', function($routeProvider) {
- $routeProvider.otherwise({redirectTo: '/view1'});
- }]);
- */
 
 WeatherApp.config(function ($stateProvider, $urlRouterProvider) {
   // UI Routing
@@ -61,23 +57,9 @@ angular.module('WeatherApp.version', [
 
 'use strict';
 
-//IguanaApp.controller("LoginController", function($scope, $state, $auth, $http, authService, tokenRefresh, $window) {
-
 WeatherApp.controller("View1Controller", function($scope) {
-  $scope.deviceId = "jer-dd";
+  
 });
-  /*angular.module('WeatherApp.view1', ['ngRoute'])
-
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/view1', {
-    templateUrl: 'views/view1.html',
-    controller: 'View1Ctrl'
-  });
-}])
-.controller('View1Ctrl', [function($scope, APIservice) {
-  $scope.deviceId = 'jer-dd';
-}]);
-    */
 'use strict';
 
 WeatherApp.controller("View2Controller", function($scope) {

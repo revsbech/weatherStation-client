@@ -3,13 +3,9 @@
 // Declare app level module which depends on views, and components
 var WeatherApp = angular.module('WeatherApp', [
   'ui.router',
+  'ui.bootstrap',
   'WeatherApp.version'
 ]);
-/*
- config(['$routeProvider', function($routeProvider) {
- $routeProvider.otherwise({redirectTo: '/view1'});
- }]);
- */
 
 WeatherApp.config(function ($stateProvider, $urlRouterProvider) {
   // UI Routing

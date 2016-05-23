@@ -7,7 +7,7 @@ instead of ng router
 
 ## Running locally
 
-Clone the reposiotyr, and run npm install, then run nom start to start a local webserver on localhost:8080. Visit
+Clone the repository, and run npm install, then run nom start to start a local webserver on localhost:8080. Visit
 the site in you browser on http://localhost:8080
 
 Run grunt watch to watch compass and js files. 

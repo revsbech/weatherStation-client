@@ -31,6 +31,7 @@ module.exports = function (grunt) {
         src: [
           'app/bower_components/angular/angular.js',
           'app/bower_components/angular-route/angular-route.js',
+          "app/bower_components/angular-bootstrap/ui-bootstrap.js",
           "app/bower_components/angular-ui-router/release/angular-ui-router.js",
         ],
         dest: 'app/libs.js'
