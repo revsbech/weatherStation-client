@@ -58,7 +58,7 @@ angular.module('WeatherApp.version', [
 'use strict';
 
 WeatherApp.controller("View1Controller", function($scope) {
-  
+
 });
 'use strict';
 
