@@ -28,17 +28,20 @@ function DeviceHiveApi(options) {
           params: {equipment: equipmentId, frequency: frequency, start: start, end: end},
 
           parse: function(returnData) {
-            var samples = {
-              highlow: [],
-              average: []
-            };
-
+            var equipmentSamples = [];
             for(var index in returnData) {
               var time = moment.utc(returnData[index]['datetime']);
-              samples.highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
-              samples.average.push([time.format('x'), returnData[index]['average']]);
+              var equipment = returnData[index]['equipment'];
+              if (equipmentSamples[equipment] == undefined) {
+                equipmentSamples[equipment] = {
+                  highlow: [],
+                  average: []
+                }
+              }
+              equipmentSamples[equipment].highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
+              equipmentSamples[equipment].average.push([time.format('x'), returnData[index]['average']]);
             }
-            return samples;
+            return equipmentSamples;
           }
       });
   }

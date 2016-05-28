@@ -8,5 +8,7 @@ WeatherApp.controller("View1Controller", function($scope, APIservice) {
   $scope.startDate = startTime;
   $scope.stopDate = endTime;
 
-
+  APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
+    $scope.graphData = graphData;
+  });
 });

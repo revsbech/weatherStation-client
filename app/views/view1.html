@@ -2,10 +2,24 @@
 	<h1>Weather station</h1>
 	<p>Monitor: Greenhouse</p>
 </div>
-<div class="well">
-	<h3>Temperature - last 24 hours</h3>
-	<graph equipment="temperature" device-id="{{deviceId}}" frequency="{{frequency}}"  start-date="startDate" stop-date="stopDate"></graph>
-	<h3>Humidity - last 24 hours</h3>
-	<graph equipment="humidity" device-id="{{deviceId}}" frequency="{{frequency}}"  start-date="startDate" stop-date="stopDate"></graph>
 
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="well">
+			<h3>Temperature - last 24 hours</h3>
+			<graph equipment="temperature,temperature2" labels="Inside,Outside" graph-data="graphData"></graph>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="well">
+			<h3>Humidity - last 24 hours</h3>
+			<graph equipment="humidity,humidity2" labels="Inside,Outside" graph-data="graphData"></graph>
+
+		</div>
+	</div>
+</div>
+<div class="well">
+	<h3>Luminosity</h3>
+	<graph equipment="luminosity" labels="Inside" graph-data="graphData"></graph>
 </div>

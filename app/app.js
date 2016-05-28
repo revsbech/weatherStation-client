@@ -66,7 +66,9 @@ WeatherApp.controller("View1Controller", function($scope, APIservice) {
   $scope.startDate = startTime;
   $scope.stopDate = endTime;
 
-
+  APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
+    $scope.graphData = graphData;
+  });
 });
 'use strict';
 
@@ -104,17 +106,20 @@ function DeviceHiveApi(options) {
           params: {equipment: equipmentId, frequency: frequency, start: start, end: end},
 
           parse: function(returnData) {
-            var samples = {
-              highlow: [],
-              average: []
-            };
-
+            var equipmentSamples = [];
             for(var index in returnData) {
               var time = moment.utc(returnData[index]['datetime']);
-              samples.highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
-              samples.average.push([time.format('x'), returnData[index]['average']]);
+              var equipment = returnData[index]['equipment'];
+              if (equipmentSamples[equipment] == undefined) {
+                equipmentSamples[equipment] = {
+                  highlow: [],
+                  average: []
+                }
+              }
+              equipmentSamples[equipment].highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
+              equipmentSamples[equipment].average.push([time.format('x'), returnData[index]['average']]);
             }
-            return samples;
+            return equipmentSamples;
           }
       });
   }
@@ -133,13 +138,13 @@ WeatherApp.directive('graph', function (APIservice, $window) {
     restrict: 'E',
     scope: {
       "equipment": '@',
-      "deviceId": '@',
-      "frequency": '@',
-      startDate: '=',
-      stopDate: '='
+      "labels": '@',
+      "graphData": '='
     },
     link: function (scope, elem, attrs) {
-
+      var equipmentArray = scope.equipment.split(',');
+      var labelArray = scope.labels.split(',');
+      var colorArray = ['#3a87ad','#009688'];
       var chart = null;
       var options = {
         xaxis: {
@@ -177,41 +182,25 @@ WeatherApp.directive('graph', function (APIservice, $window) {
 
       // When data is ready, render chart
       var chart = null;
-  /*
-      if (elem.width() == 0 || elem.height() == 0) {
-        return;
-      }
-      */
-      scope.$watch('[graphDates, frequency, timezone]', function() {
-        var startTime = moment().subtract(24 * 60 , 'minutes');
-        var endTime = moment();
-        APIservice.getSamples(scope.deviceId, scope.equipment, scope.frequency, scope.startDate, scope.stopDate).then(function (graphData) {
+      scope.$watch('graphData', function() {
 
+        if (scope.graphData != undefined) {
+          var dataset = [];
 
-          var dataset = [
-            {
-              id: 'highlow',
-              color: "rgba(217, 237, 247, 1.0)",
-              lines: {
-                show: true,
-                fill: true,
-                lineWidth: 0,
-                fillColor: "rgba(207, 227, 247, 0.7)"
-              },
-              highlightColor: "rgba(0, 0, 0, 0.0)",
-              data: graphData.highlow,
-            },
-            {
-              id: 'average',
-              label: 'Average',
-              color: "#3a87ad",
+          for (var index in equipmentArray) {
+            var equipment = equipmentArray[index];
+
+            dataset.push({
+              id: equipment,
+              label: labelArray[index],
+              color: colorArray[index],
               lines: {
                 lineWidth: 1.5,
                 show: true
               },
-              data: graphData.average
-            }
-          ];
+              data: scope.graphData[equipment].average
+            });
+          }
 
           if (chart) {
             chart.setData(dataset);
@@ -221,7 +210,6 @@ WeatherApp.directive('graph', function (APIservice, $window) {
           }
           chart = $.plot(elem, dataset, options);
 
-
           // Listen to window resize event
           // then re-draw the graphs
           angular.element($window).on('resize', function () {
@@ -229,10 +217,8 @@ WeatherApp.directive('graph', function (APIservice, $window) {
              chart.setupGrid();
              chart.draw();
           });
-
-        });
-      }, true);
-
+        }
+      });
 
 
       // Cleanup the chart when it goes out of scope
