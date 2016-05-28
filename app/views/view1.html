@@ -1,7 +1,11 @@
 <div class="jumbotron">
-	<h1>Angular template</h1>
-	<p>Basic Angular template</p>
+	<h1>Weather station</h1>
+	<p>Monitor: Greenhouse</p>
 </div>
 <div class="well">
-	<p>Basic angular template for bootstrapping new apps</p>
+	<h3>Temperature - last 24 hours</h3>
+	<graph equipment="temperature" device-id="{{deviceId}}" frequency="{{frequency}}"  start-date="startDate" stop-date="stopDate"></graph>
+	<h3>Humidity - last 24 hours</h3>
+	<graph equipment="humidity" device-id="{{deviceId}}" frequency="{{frequency}}"  start-date="startDate" stop-date="stopDate"></graph>
+
 </div>
