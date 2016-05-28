@@ -19,3 +19,9 @@ graph {
     height: 200px;
   }
 }
+.col-md-6 graph {
+  height: 300px;
+  @media screen and (max-width: $break-small) {
+    height: 200px;
+  }
+}
