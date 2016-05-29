@@ -1,11 +1,15 @@
 'use strict';
 
+
 // Declare app level module which depends on views, and components
 var WeatherApp = angular.module('WeatherApp', [
   'ui.router',
   'ui.bootstrap',
-  'WeatherApp.version'
+  'WeatherApp.version',
+  'angular-loading-bar',
+  'angularMoment'
 ]);
+
 
 WeatherApp.config(function ($stateProvider, $urlRouterProvider) {
   // UI Routing
@@ -57,9 +61,39 @@ angular.module('WeatherApp.version', [
 
 'use strict';
 
-WeatherApp.controller("View1Controller", function($scope) {
+WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) {
+  $scope.deviceId = "jer-greenhouse01";
+  $scope.reloadInterval = 60000;
 
+
+
+  $scope.reloadData = function() {
+    var startTime = moment().subtract(24 , 'hours');
+    var endTime = moment();
+    $scope.frequency = "minute";
+    $scope.startDate = startTime;
+    $scope.stopDate = endTime;
+
+    APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
+      $scope.graphData = graphData;
+      $scope.lastSamples = [];
+      for (var index in graphData) {
+        var length = graphData[index]['average'].length;
+        $scope.lastSamples[index] = graphData[index]['average'][0][1];
+      }
+    });
+
+    $timeout(function() {
+      $scope.reloadData()
+    }, $scope.reloadInterval);
+
+  };
+
+  $scope.reloadData();
 });
+
+
+
 'use strict';
 
 WeatherApp.controller("View2Controller", function($scope) {
@@ -96,36 +130,151 @@ function DeviceHiveApi(options) {
           params: {equipment: equipmentId, frequency: frequency, start: start, end: end},
 
           parse: function(returnData) {
-            var samples = {
-              highlow: [],
-              average: []
-            };
-
+            var equipmentSamples = [];
             for(var index in returnData) {
               var time = moment.utc(returnData[index]['datetime']);
-              samples.highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
-              samples.average.push([time.format('x'), returnData[index]['average']]);
+              var equipment = returnData[index]['equipment'];
+              if (equipmentSamples[equipment] == undefined) {
+                equipmentSamples[equipment] = {
+                  highlow: [],
+                  average: []
+                }
+              }
+              equipmentSamples[equipment].highlow.push([time.format('x'), returnData[index]['high'], returnData[index]['low']]);
+              equipmentSamples[equipment].average.push([time.format('x'), returnData[index]['average']]);
             }
-            return samples;
+            return equipmentSamples;
           }
       });
   }
 }
+/**
+ * This directive expects the date, equipment and frequency to be in scope!
+ *
+ * - Device must be a devicemodel with an id attribute
+ * - Equipment must be an equipment model with a code attribute
+ * - Date must be and object containting minDate and maxDate as moment objects
+ * - frequency must be a string "minute", "hour" or "day"
+ *
+ */
+WeatherApp.directive('graph', function (APIservice, $window) {
+  return {
+    restrict: 'E',
+    scope: {
+      "equipment": '@',
+      "labels": '@',
+      "graphData": '='
+    },
+    link: function (scope, elem, attrs) {
+      var equipmentArray = scope.equipment.split(',');
+      var labelArray = scope.labels.split(',');
+      var colorArray = ['#3a87ad','#009688'];
+      var chart = null;
+      var options = {
+        xaxis: {
+          mode: 'time',
+          timezone: 'browser'
+        },
+        yaxes: [{
+          position: 'right',
+          labelWidth: 50
+        }],
+        legend: {show: true},
+        grid: {
+          hoverable: true,
+          clickable: true,
+          autoHighlight: true,
+          color: '#404041',
+          borderColor: '#404041'
+        },
+        tooltip: true,
+        tooltipOpts: {
+          content: '<div class="popover-content"><small><strong>%y</strong> - %x</small></div>',
+          xDateFormat: '%Y/%m/%d %H:%M:%S',
+          defaultTheme: false,
+          onHover: function (item, toolTip) {
+            // No tooltips for highlow
+            if (item.series.id.lastIndexOf("highlow-", 0) === 0) {
+              $(toolTip).hide();
+              return;
+            }
+
+            $(toolTip).addClass('popover');
+          }
+        }
+      };
+
+      // When data is ready, render chart
+      var chart = null;
+      scope.$watch('graphData', function() {
+
+        if (scope.graphData != undefined) {
+          var dataset = [];
+
+          for (var index in equipmentArray) {
+            var equipment = equipmentArray[index];
+
+            dataset.push({
+              id: equipment,
+              label: labelArray[index],
+              color: colorArray[index],
+              lines: {
+                lineWidth: 1.5,
+                show: true
+              },
+              data: scope.graphData[equipment].average
+            });
+          }
+
+          if (chart) {
+            chart.setData(dataset);
+            chart.setupGrid();
+            chart.draw();
+            return;
+          }
+          chart = $.plot(elem, dataset, options);
+
+          // Listen to window resize event
+          // then re-draw the graphs
+          angular.element($window).on('resize', function () {
+             chart.resize();
+             chart.setupGrid();
+             chart.draw();
+          });
+        }
+      });
+
+
+      // Cleanup the chart when it goes out of scope
+      // https://groups.google.com/forum/#!topic/angular/5rNNI8ONhYQ
+      scope.$on('$destroy', function () {
+        if (!chart) {
+          return
+        }
+
+        chart.shutdown();
+      });
+    }
+  }
+
+});
+
 
 function AuthenticationError(message) {
     this.message = (message || "");
 }
 AuthenticationError.prototype = new Error();
 
-WeatherApp.factory('APIservice', function ($q, $http, $auth) {
+WeatherApp.factory('APIservice', function ($q, $http) {
   var deviceHiveBaseUrl = 'http://hive.moc.net:3000/';
-
+  var deviceHiveToken = '123';
   var deviceHiveApi = new DeviceHiveApi({
       baseUrl: deviceHiveBaseUrl,
       request: function(request) {
           var deferred = $q.defer();
           var canceler = $q.defer();
           request.cache = false;
+          request.headers['Authorization'] = "Bearer " + deviceHiveToken;
           //http://docs.angularjs.org/api/ng.$http#methods_get
           $http(request)
               .success(function(data, status, headers, config) {

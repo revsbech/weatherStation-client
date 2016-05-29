@@ -1,7 +1,38 @@
 <div class="jumbotron">
-	<h1>Angular template</h1>
-	<p>Basic Angular template</p>
+	<div class="row">
+		<div class="col-md-6">
+			<h1>Weather station</h1>
+			<p>Monitor: Greenhouse</p>
+		</div>
+		<div class="col-md-6">
+			<h3>Current values</h3>
+			<i>Temperature inside:</i> {{ lastSamples.temperature |  number : 2 }}°<br />
+			<i>Temperature outside:</i> {{ lastSamples.temperature2 |  number : 2 }}°<br />
+			<i>Humidity inside:</i> {{ lastSamples.humidity |  number : 2 }}%<br />
+			<i>Humidity outside:</i> {{ lastSamples.humidity2 |  number : 2}}%<br />
+			<i>Luminosity:</i> {{ lastSamples.luminosity |  number : 0 }}<br />
+			<i>Last update {{ stopDate | amDateFormat:'MMM DD, YYYY HH:mm:ss' }}</i>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="well">
+			<h3>Temperature - last 24 hours</h3>
+			<graph equipment="temperature,temperature2" labels="Inside,Outside" graph-data="graphData"></graph>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="well">
+			<h3>Humidity - last 24 hours</h3>
+			<graph equipment="humidity,humidity2" labels="Inside,Outside" graph-data="graphData"></graph>
+
+		</div>
+	</div>
 </div>
 <div class="well">
-	<p>Basic angular template for bootstrapping new apps</p>
+	<h3>Luminosity</h3>
+	<graph equipment="luminosity" labels="Inside" graph-data="graphData"></graph>
 </div>

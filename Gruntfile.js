@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           "app/bower_components/bootstrap/dist/css/bootstrap.css",
           'app/bower_components/bootstrap-material-design/dist/css/bootstrap-material-design.css',
           'app/bower_components/bootstrap-material-design/dist/css/ripples.css',
-          "app/bower_components/moment/src/moment.js"
+          "app/bower_components/angular-loading-bar/build/loading-bar.min.css"
         ],
         dest: 'app/libs.css'
       },
@@ -33,6 +33,13 @@ module.exports = function (grunt) {
           'app/bower_components/angular-route/angular-route.js',
           "app/bower_components/angular-bootstrap/ui-bootstrap.js",
           "app/bower_components/angular-ui-router/release/angular-ui-router.js",
+          "app/bower_components/moment/moment.js",
+          "app/bower_components/jquery/dist/jquery.js",
+          "app/bower_components/Flot/jquery.flot.js",
+          "app/bower_components/Flot/jquery.flot.time.js",
+          "app/bower_components/Flot/jquery.flot.time.js",
+          "app/bower_components/angular-loading-bar/build/loading-bar.min.js",
+          "app/bower_components/angular-moment/angular-moment.js"
         ],
         dest: 'app/libs.js'
       },
