@@ -3,15 +3,29 @@
 WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) {
   $scope.deviceId = "jer-greenhouse01";
   $scope.reloadInterval = 60000;
+  $scope.frequency = "minute";
+  $scope.offsetHours = 24;
+  $scope.startDate = moment().subtract($scope.offsetHours , 'hours');
+  $scope.stopDate = moment();
 
 
+  $scope.setOffsetHours = function(offset) {
+    //$scope.frequency = "minute";
+    if (offset > 24*90) {
+      $scope.frequency = "week";
+    } else if (offset > 24) {
+      $scope.frequency = "hour";
+    } else {
+      $scope.frequency = "minute";
+    }
+    $scope.offsetHours = offset;
+    $scope.startDate = moment().subtract($scope.offsetHours , 'hours');
+    $scope.stopDate = moment();
 
+    $scope.reloadData();
+
+  };
   $scope.reloadData = function() {
-    var startTime = moment().subtract(24 , 'hours');
-    var endTime = moment();
-    $scope.frequency = "minute";
-    $scope.startDate = startTime;
-    $scope.stopDate = endTime;
 
     APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
       $scope.graphData = graphData;
@@ -23,7 +37,9 @@ WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) 
     });
 
     $timeout(function() {
-      $scope.reloadData()
+      $scope.startDate = moment().subtract($scope.offsetHours , 'hours');
+      $scope.stopDate = moment();
+      $scope.reloadData();
     }, $scope.reloadInterval);
 
   };

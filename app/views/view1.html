@@ -4,7 +4,7 @@
 			<h1>Weather station</h1>
 			<p>Monitor: Greenhouse</p>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<h3>Current values</h3>
 			<i>Temperature inside:</i> {{ lastSamples.temperature |  number : 2 }}°<br />
 			<i>Temperature outside:</i> {{ lastSamples.temperature2 |  number : 2 }}°<br />
@@ -13,6 +13,13 @@
 			<i>Luminosity:</i> {{ lastSamples.luminosity |  number : 0 }}<br />
 			<i>Last update {{ stopDate | amDateFormat:'MMM DD, YYYY HH:mm:ss' }}</i>
 		</div>
+		<div class="col-md-2">
+			<h3>Presets</h3>
+			<button ng-click="setOffsetHours(24*7)">Last week</button><br />
+			<button ng-click="setOffsetHours(24)">Last 24 hours</button>
+			<button ng-click="setOffsetHours(4)">Last 4 hours</button>
+			<button ng-click="setOffsetHours(1)">Last 1 hour</button>
+		</div>
 	</div>
 </div>
 
@@ -20,19 +27,19 @@
 <div class="row">
 	<div class="col-md-6">
 		<div class="well">
-			<h3>Temperature - last 24 hours</h3>
+			<h3>Temperature - last {{offsetHours}} hours</h3>
 			<graph equipment="temperature,temperature2" labels="Inside,Outside" graph-data="graphData"></graph>
 		</div>
 	</div>
 	<div class="col-md-6">
 		<div class="well">
-			<h3>Humidity - last 24 hours</h3>
+			<h3>Humidity - last {{offsetHours}} hours</h3>
 			<graph equipment="humidity,humidity2" labels="Inside,Outside" graph-data="graphData"></graph>
 
 		</div>
 	</div>
 </div>
 <div class="well">
-	<h3>Luminosity</h3>
+	<h3>Luminosity - last {{offsetHours}}</h3>
 	<graph equipment="luminosity" labels="Inside" graph-data="graphData"></graph>
 </div>
