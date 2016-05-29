@@ -10,7 +10,8 @@
 			<i>Temperature outside:</i> {{ lastSamples.temperature2 |  number : 2 }}°<br />
 			<i>Humidity inside:</i> {{ lastSamples.humidity |  number : 2 }}%<br />
 			<i>Humidity outside:</i> {{ lastSamples.humidity2 |  number : 2}}%<br />
-			<i>Luminosity:</i> {{ lastSamples.luminosity }}<br />
+			<i>Luminosity:</i> {{ lastSamples.luminosity |  number : 0 }}<br />
+			<i>Last update {{ stopDate | amDateFormat:'MMM DD, YYYY HH:mm:ss' }}</i>
 		</div>
 	</div>
 </div>

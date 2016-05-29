@@ -5,8 +5,11 @@
 var WeatherApp = angular.module('WeatherApp', [
   'ui.router',
   'ui.bootstrap',
-  'WeatherApp.version'
+  'WeatherApp.version',
+  'angular-loading-bar',
+  'angularMoment'
 ]);
+
 
 WeatherApp.config(function ($stateProvider, $urlRouterProvider) {
   // UI Routing
@@ -58,23 +61,39 @@ angular.module('WeatherApp.version', [
 
 'use strict';
 
-WeatherApp.controller("View1Controller", function($scope, APIservice) {
-  var startTime = moment().subtract(2 , 'hours');
-  var endTime = moment();
+WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) {
   $scope.deviceId = "jer-greenhouse01";
-  $scope.frequency = "minute";
-  $scope.startDate = startTime;
-  $scope.stopDate = endTime;
+  $scope.reloadInterval = 60000;
 
-  APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
-    $scope.graphData = graphData;
-    $scope.lastSamples = [];
-    for (var index in graphData) {
-      var length = graphData[index]['average'].length;
-      $scope.lastSamples[index] = graphData[index]['average'][0][1];
-    }
-  });
+
+
+  $scope.reloadData = function() {
+    var startTime = moment().subtract(24 , 'hours');
+    var endTime = moment();
+    $scope.frequency = "minute";
+    $scope.startDate = startTime;
+    $scope.stopDate = endTime;
+
+    APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
+      $scope.graphData = graphData;
+      $scope.lastSamples = [];
+      for (var index in graphData) {
+        var length = graphData[index]['average'].length;
+        $scope.lastSamples[index] = graphData[index]['average'][0][1];
+      }
+    });
+
+    $timeout(function() {
+      $scope.reloadData()
+    }, $scope.reloadInterval);
+
+  };
+
+  $scope.reloadData();
 });
+
+
+
 'use strict';
 
 WeatherApp.controller("View2Controller", function($scope) {

@@ -5,8 +5,11 @@
 var WeatherApp = angular.module('WeatherApp', [
   'ui.router',
   'ui.bootstrap',
-  'WeatherApp.version'
+  'WeatherApp.version',
+  'angular-loading-bar',
+  'angularMoment'
 ]);
+
 
 WeatherApp.config(function ($stateProvider, $urlRouterProvider) {
   // UI Routing
