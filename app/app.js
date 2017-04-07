@@ -62,7 +62,7 @@ angular.module('WeatherApp.version', [
 'use strict';
 
 WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) {
-  $scope.deviceId = "jer-greenhouse01";
+  $scope.deviceId = "greenhouse01";
   $scope.reloadInterval = 60000;
   $scope.frequency = "minute";
   $scope.offsetHours = 24;
@@ -88,6 +88,7 @@ WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) 
   };
   $scope.reloadData = function() {
 
+    console.log($scope.stopDate);
     APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
       $scope.graphData = graphData;
       $scope.lastSamples = [];
@@ -282,8 +283,8 @@ function AuthenticationError(message) {
 AuthenticationError.prototype = new Error();
 
 WeatherApp.factory('APIservice', function ($q, $http) {
-  var deviceHiveBaseUrl = 'http://hive.moc.net:3000/';
-  var deviceHiveToken = '123';
+  var deviceHiveBaseUrl = 'https://hive.grundfosbacmon.com/';
+  var deviceHiveToken = 'sqgZNlwg1KNDWuZnE0Cg';
   var deviceHiveApi = new DeviceHiveApi({
       baseUrl: deviceHiveBaseUrl,
       request: function(request) {
