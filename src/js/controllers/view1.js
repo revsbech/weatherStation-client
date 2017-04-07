@@ -1,7 +1,7 @@
 'use strict';
 
 WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) {
-  $scope.deviceId = "jer-greenhouse01";
+  $scope.deviceId = "greenhouse01";
   $scope.reloadInterval = 60000;
   $scope.frequency = "minute";
   $scope.offsetHours = 24;

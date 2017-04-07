@@ -5,8 +5,8 @@ function AuthenticationError(message) {
 AuthenticationError.prototype = new Error();
 
 WeatherApp.factory('APIservice', function ($q, $http) {
-  var deviceHiveBaseUrl = 'http://hive.moc.net:3000/';
-  var deviceHiveToken = '123';
+  var deviceHiveBaseUrl = 'https://hive.grundfosbacmon.com/';
+  var deviceHiveToken = 'sqgZNlwg1KNDWuZnE0Cg';
   var deviceHiveApi = new DeviceHiveApi({
       baseUrl: deviceHiveBaseUrl,
       request: function(request) {

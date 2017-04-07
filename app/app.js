@@ -88,7 +88,6 @@ WeatherApp.controller("View1Controller", function($scope, APIservice, $timeout) 
   };
   $scope.reloadData = function() {
 
-    console.log($scope.stopDate);
     APIservice.getSamples($scope.deviceId, $scope.equipment, $scope.frequency, $scope.startDate, $scope.stopDate).then(function (graphData) {
       $scope.graphData = graphData;
       $scope.lastSamples = [];
@@ -283,7 +282,7 @@ function AuthenticationError(message) {
 AuthenticationError.prototype = new Error();
 
 WeatherApp.factory('APIservice', function ($q, $http) {
-  var deviceHiveBaseUrl = 'https://hive.grundfosbacmon.com/';
+  var deviceHiveBaseUrl = 'http://hive.grundfosbacmon.com/';
   var deviceHiveToken = 'sqgZNlwg1KNDWuZnE0Cg';
   var deviceHiveApi = new DeviceHiveApi({
       baseUrl: deviceHiveBaseUrl,
